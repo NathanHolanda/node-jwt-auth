@@ -6,21 +6,25 @@ const route = Router()
 const usersRepository = new UsersRepository()
 
 route.get('/users', async (req: Request, res: Response, next: NextFunction) => {
-    const users = await usersRepository.getAllUsers()
+    const users = await usersRepository.getAll()
 
     return res.json(users)
 })
 
-route.get('/users/:uuid', (req: Request<{uuid: string}>, res: Response, next: NextFunction) => {
+route.get('/users/:uuid', async (req: Request<{uuid: string}>, res: Response, next: NextFunction) => {
     const {uuid} = req.params
 
-    return res.status(200).json({uuid})
+    const user = await usersRepository.find(uuid)
+
+    return res.status(200).json(user)
 })
 
-route.post('/users/', (req: Request, res: Response, next: NextFunction) => {
-    const users = [{name: "Nathan"}]
+route.post('/users/', async (req: Request, res: Response, next: NextFunction) => {
+    const user = req.body
 
-    return res.status(200).send()
+    const uuid = await usersRepository.create(user)
+
+    return res.status(200).send({uuid})
 })
 
 route.put('/users/:uuid', (req: Request, res: Response, next: NextFunction) => {

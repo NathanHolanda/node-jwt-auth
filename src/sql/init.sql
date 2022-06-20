@@ -8,4 +8,4 @@ CREATE TABLE IF NOT EXISTS users(
     PRIMARY KEY (uuid)
 );
 
-INSERT INTO users VALUES ("nathan", crypt("admin", "my_password"));
+INSERT INTO users VALUES ('nathan', crypt('admin', 'my_password'));
