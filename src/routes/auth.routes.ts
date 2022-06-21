@@ -1,6 +1,10 @@
+import dotenv from "dotenv";
 import { NextFunction, Request, Response, Router } from "express";
+import jwt from "jsonwebtoken";
 import ForbiddenError from "../errors/ForbiddenError";
 import UsersRepository from "../repositories/UsersRepository";
+
+dotenv.config()
 
 const routes = Router()
 
@@ -19,7 +23,17 @@ routes.post('/token', async (req: Request, res: Response, next: NextFunction) =>
         const [username, password] = credentials.split(':')
 
         const user = await usersRepository.authenticate(username, password)
-        console.log(user)
+
+        if(!user)
+            throw new ForbiddenError("Acesso negado.")
+
+        const jwtPayload = {username: user.name}
+        const jwtSecret = String(process.env.JWT_SECRET_KEY)
+        const jwtOptions = {subject: user.uuid}
+
+        const jwtToken = jwt.sign(jwtPayload, jwtSecret, jwtOptions)
+
+        return res.json({token: jwtToken})
 
         return res.send()
     }catch(err: any){

@@ -21,7 +21,7 @@ routes.get('/:uuid', async (req: Request<{uuid: string}>, res: Response, next: N
 
         const user = await usersRepository.find(uuid)
 
-        return res.status(200).json(user)
+        return res.json(user)
     }catch(err: any){
         next(err)
     }
@@ -33,7 +33,7 @@ routes.post('/', async (req: Request, res: Response, next: NextFunction) => {
 
         const uuid = await usersRepository.create(data)
 
-        return res.status(200).json({uuid})
+        return res.status(201).json({uuid})
     }catch(err: any){
         next(err)
     }
@@ -46,7 +46,7 @@ routes.put('/:uuid', async (req: Request, res: Response, next: NextFunction) => 
 
         await usersRepository.modify(uuid, data)
 
-        return res.status(200).send()
+        return res.send()
     }catch(err: any){
         next(err)
     }
@@ -58,7 +58,7 @@ routes.delete('/:uuid', async (req: Request, res: Response, next: NextFunction) 
 
         await usersRepository.remove(uuid)
 
-        return res.status(200).send()
+        return res.send()
     }catch(err: any){
         next(err)
     }
