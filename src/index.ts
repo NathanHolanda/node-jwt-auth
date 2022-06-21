@@ -1,10 +1,10 @@
 import express, {Response, Request, NextFunction} from "express"
-import usersRoutes from "./routes/users.routes"
+import routes from "./routes"
 
 const app = express()
 
 app.use(express.json())
 
-app.use(usersRoutes)
+app.use(routes)
 
 app.listen(3000)

@@ -1,47 +1,68 @@
 import { NextFunction, Request, Response, Router } from "express"
+import DatabaseError from "../errors/DatabaseError"
 import UsersRepository from "../repositories/UsersRepository"
 
 const route = Router()
 
 const usersRepository = new UsersRepository()
 
-route.get('/users', async (req: Request, res: Response, next: NextFunction) => {
-    const users = await usersRepository.getAll()
+route.get('/', async (req: Request, res: Response, next: NextFunction) => {
+    try{
+        const users = await usersRepository.getAll()
 
-    return res.json(users)
+        return res.json(users)
+    }catch(err: any){
+        next(err)
+    }
 })
 
-route.get('/users/:uuid', async (req: Request<{uuid: string}>, res: Response, next: NextFunction) => {
-    const {uuid} = req.params
-    
-    const user = await usersRepository.find(uuid)
+route.get('/:uuid', async (req: Request<{uuid: string}>, res: Response, next: NextFunction) => {
+    try{
+        const {uuid} = req.params
 
-    return res.status(200).json(user)
+        const user = await usersRepository.find(uuid)
+
+        return res.status(200).json(user)
+    }catch(err: any){
+        next(err)
+    }
 })
 
-route.post('/users/', async (req: Request, res: Response, next: NextFunction) => {
-    const data = req.body
+route.post('/', async (req: Request, res: Response, next: NextFunction) => {
+    try{
+        const data = req.body
 
-    const uuid = await usersRepository.create(data)
+        const uuid = await usersRepository.create(data)
 
-    return res.status(200).json({uuid})
+        return res.status(200).json({uuid})
+    }catch(err: any){
+        next(err)
+    }
 })
 
-route.put('/users/:uuid', async (req: Request, res: Response, next: NextFunction) => {
-    const {uuid} = req.params
-    const data = req.body
+route.put('/:uuid', async (req: Request, res: Response, next: NextFunction) => {
+    try{
+        const {uuid} = req.params
+        const data = req.body
 
-    await usersRepository.modify(uuid, data)
+        await usersRepository.modify(uuid, data)
 
-    return res.status(200).send()
+        return res.status(200).send()
+    }catch(err: any){
+        next(err)
+    }
 })
 
-route.delete('/users/:uuid', async (req: Request, res: Response, next: NextFunction) => {
-    const {uuid} = req.params
+route.delete('/:uuid', async (req: Request, res: Response, next: NextFunction) => {
+    try{
+        const {uuid} = req.params
 
-    await usersRepository.remove(uuid)
+        await usersRepository.remove(uuid)
 
-    return res.status(200).send()
+        return res.status(200).send()
+    }catch(err: any){
+        next(err)
+    }
 })
 
 export default route

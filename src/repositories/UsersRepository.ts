@@ -1,6 +1,7 @@
 import { User } from "../models/User";
 import pool from "../db"
 import dotenv from "dotenv"
+import DatabaseError from "../errors/DatabaseError";
 
 class UsersRepository{
     constructor(){
@@ -8,68 +9,88 @@ class UsersRepository{
     }
 
     async getAll(): Promise<User[]>{
-        const script = `
-            SELECT uuid, name
-            FROM users
-        `
+        try{
+            const script = `
+                SELECT uuid, name
+                FROM users
+            `
 
-        const {rows} = await pool.query<User>(script)
-  
-        return rows
+            const {rows} = await pool.query<User>(script)
+    
+            return rows
+        }catch(err: any){
+            throw new DatabaseError("Error while getting all users.")
+        }
     }
 
-    async find(uuid: string): Promise<User>{
-        const script = `
-            SELECT uuid, name 
-            FROM users 
-            WHERE uuid = $1
-        `
-        const values = [uuid]
+    async find(uuid: string): Promise<User | DatabaseError>{
+        try{
+            const script = `
+                SELECT uuid, name 
+                FROM users 
+                WHERE uuid = $1
+            `
+            const values = [uuid]
 
-        const {rows} = await pool.query<User>(script, values)
-        const [user] = rows
+            const {rows} = await pool.query<User>(script, values)
+            const [user] = rows
 
-        return user
+            return user
+        }catch(err: any){
+            throw new DatabaseError("Error while getting user by UUID.")
+        }
     }
 
     async create(user: User): Promise<string>{
-        const cryptKey = process.env.PG_PASSWORD_CRYPT_KEY
-        const script = `
-            INSERT INTO users("name", "password")
-            VALUES($1, crypt($2, '${cryptKey}'))
-            RETURNING uuid
-        `
+        try{
+            const cryptKey = process.env.PG_PASSWORD_CRYPT_KEY
+            const script = `
+                INSERT INTO users("name", "password")
+                VALUES($1, crypt($2, '${cryptKey}'))
+                RETURNING uuid
+            `
 
-        const values = [user.name, user.password]
+            const values = [user.name, user.password]
 
-        const { rows: [row] } = await pool.query<{uuid: string}>(script, values)
-        const {uuid} = row
+            const { rows: [row] } = await pool.query<{uuid: string}>(script, values)
+            const {uuid} = row
 
-        return uuid
+            return uuid
+        }catch(err: any){
+            throw new DatabaseError("Error while creating a new user.")
+        }
     }
 
     async modify(uuid: string, user: User): Promise<void>{
-        const cryptKey = process.env.PG_PASSWORD_CRYPT_KEY
-        const script = `
-            UPDATE users
-            SET "name" = $1, "password" = crypt($2, '${cryptKey}')
-            WHERE uuid = $3
-        `
+        try{
+            const cryptKey = process.env.PG_PASSWORD_CRYPT_KEY
+            const script = `
+                UPDATE users
+                SET "name" = $1, "password" = crypt($2, '${cryptKey}')
+                WHERE uuid = $3
+            `
 
-        const values = [user.name, user.password, uuid]
+            const values = [user.name, user.password, uuid]
 
-        await pool.query(script, values)
+            await pool.query(script, values)
+        }catch(err: any){
+            throw new DatabaseError("Error while updating user.")
+        }
     }
 
     async remove(uuid: string): Promise<void>{
-        const script = `
-            DELETE FROM users
-            WHERE uuid = $1
-        `
+        try{
+            const script = `
+                DELETE FROM users
+                WHERE uuid = $1
+            `
 
-        const values = [uuid]
+            const values = [uuid]
 
-        await pool.query(script, values)
+            await pool.query(script, values)
+        }catch(err: any){
+            throw new DatabaseError("Error while deleting user.")
+        }
     }
 }
 
