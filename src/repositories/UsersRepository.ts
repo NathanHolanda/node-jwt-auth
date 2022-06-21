@@ -1,7 +1,7 @@
-import { User } from "../models/User";
-import pool from "../db"
-import dotenv from "dotenv"
+import dotenv from "dotenv";
+import pool from "../db";
 import DatabaseError from "../errors/DatabaseError";
+import { User } from "../models/User";
 
 class UsersRepository{
     constructor(){
@@ -11,7 +11,7 @@ class UsersRepository{
     async getAll(): Promise<User[]>{
         try{
             const script = `
-                SELECT uuid, name
+                SELECT "uuid", "name"
                 FROM users
             `
 
@@ -26,9 +26,9 @@ class UsersRepository{
     async find(uuid: string): Promise<User | DatabaseError>{
         try{
             const script = `
-                SELECT uuid, name 
+                SELECT "uuid", "name" 
                 FROM users 
-                WHERE uuid = $1
+                WHERE "uuid" = $1
             `
             const values = [uuid]
 
@@ -47,7 +47,7 @@ class UsersRepository{
             const script = `
                 INSERT INTO users("name", "password")
                 VALUES($1, crypt($2, '${cryptKey}'))
-                RETURNING uuid
+                RETURNING "uuid"
             `
 
             const values = [user.name, user.password]
@@ -67,7 +67,7 @@ class UsersRepository{
             const script = `
                 UPDATE users
                 SET "name" = $1, "password" = crypt($2, '${cryptKey}')
-                WHERE uuid = $3
+                WHERE "uuid" = $3
             `
 
             const values = [user.name, user.password, uuid]
@@ -82,7 +82,7 @@ class UsersRepository{
         try{
             const script = `
                 DELETE FROM users
-                WHERE uuid = $1
+                WHERE "uuid" = $1
             `
 
             const values = [uuid]
@@ -91,6 +91,22 @@ class UsersRepository{
         }catch(err: any){
             throw new DatabaseError("Error while deleting user.")
         }
+    }
+
+    async authenticate(username: string, password: string): Promise<User | null>{
+        const cryptKey = process.env.PG_PASSWORD_CRYPT_KEY
+        const script = `
+            SELECT "uuid", "name"
+            FROM users
+            WHERE "name" = $1 
+            AND "password" = crypt($2, '${cryptKey}')
+        `
+        
+        const values = [username, password]
+
+        const {rows: [user]} = await pool.query<User>(script, values)
+
+        return user ?? null
     }
 }
 

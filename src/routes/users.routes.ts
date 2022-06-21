@@ -1,12 +1,11 @@
 import { NextFunction, Request, Response, Router } from "express"
-import DatabaseError from "../errors/DatabaseError"
 import UsersRepository from "../repositories/UsersRepository"
 
-const route = Router()
+const routes = Router()
 
 const usersRepository = new UsersRepository()
 
-route.get('/', async (req: Request, res: Response, next: NextFunction) => {
+routes.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try{
         const users = await usersRepository.getAll()
 
@@ -16,7 +15,7 @@ route.get('/', async (req: Request, res: Response, next: NextFunction) => {
     }
 })
 
-route.get('/:uuid', async (req: Request<{uuid: string}>, res: Response, next: NextFunction) => {
+routes.get('/:uuid', async (req: Request<{uuid: string}>, res: Response, next: NextFunction) => {
     try{
         const {uuid} = req.params
 
@@ -28,7 +27,7 @@ route.get('/:uuid', async (req: Request<{uuid: string}>, res: Response, next: Ne
     }
 })
 
-route.post('/', async (req: Request, res: Response, next: NextFunction) => {
+routes.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try{
         const data = req.body
 
@@ -40,7 +39,7 @@ route.post('/', async (req: Request, res: Response, next: NextFunction) => {
     }
 })
 
-route.put('/:uuid', async (req: Request, res: Response, next: NextFunction) => {
+routes.put('/:uuid', async (req: Request, res: Response, next: NextFunction) => {
     try{
         const {uuid} = req.params
         const data = req.body
@@ -53,7 +52,7 @@ route.put('/:uuid', async (req: Request, res: Response, next: NextFunction) => {
     }
 })
 
-route.delete('/:uuid', async (req: Request, res: Response, next: NextFunction) => {
+routes.delete('/:uuid', async (req: Request, res: Response, next: NextFunction) => {
     try{
         const {uuid} = req.params
 
@@ -65,4 +64,4 @@ route.delete('/:uuid', async (req: Request, res: Response, next: NextFunction) =
     }
 })
 
-export default route
+export default routes
