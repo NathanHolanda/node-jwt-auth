@@ -1,4 +1,4 @@
-import { Pool, Client } from 'pg'
+import { Pool } from 'pg'
 import dotenv from "dotenv"
 
 dotenv.config()
@@ -10,7 +10,6 @@ const config = {
   port: +(process.env.PG_PORT ?? 5432),
   database: process.env.PG_DATABASE ?? ""
 }
-console.log(config)
 
 const pool = new Pool(config)
 
