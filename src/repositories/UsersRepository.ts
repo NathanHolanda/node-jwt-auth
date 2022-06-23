@@ -11,7 +11,7 @@ class UsersRepository{
     async getAll(): Promise<User[]>{
         try{
             const script = `
-                SELECT "uuid", "name"
+                SELECT "uuid", "username"
                 FROM users
             `
 
@@ -26,7 +26,7 @@ class UsersRepository{
     async find(uuid: string): Promise<User | DatabaseError>{
         try{
             const script = `
-                SELECT "uuid", "name" 
+                SELECT "uuid", "username" 
                 FROM users 
                 WHERE "uuid" = $1
             `
@@ -45,12 +45,12 @@ class UsersRepository{
         try{
             const cryptKey = process.env.PG_PASSWORD_CRYPT_KEY
             const script = `
-                INSERT INTO users("name", "password")
+                INSERT INTO users("username", "password")
                 VALUES($1, crypt($2, '${cryptKey}'))
                 RETURNING "uuid"
             `
 
-            const values = [user.name, user.password]
+            const values = [user.username, user.password]
 
             const { rows: [row] } = await pool.query<{uuid: string}>(script, values)
             const {uuid} = row
@@ -66,11 +66,11 @@ class UsersRepository{
             const cryptKey = process.env.PG_PASSWORD_CRYPT_KEY
             const script = `
                 UPDATE users
-                SET "name" = $1, "password" = crypt($2, '${cryptKey}')
+                SET "username" = $1, "password" = crypt($2, '${cryptKey}')
                 WHERE "uuid" = $3
             `
 
-            const values = [user.name, user.password, uuid]
+            const values = [user.username, user.password, uuid]
 
             await pool.query(script, values)
         }catch(err: any){
@@ -96,9 +96,9 @@ class UsersRepository{
     async authenticate(username: string, password: string): Promise<User | null>{
         const cryptKey = process.env.PG_PASSWORD_CRYPT_KEY
         const script = `
-            SELECT "uuid", "name"
+            SELECT "uuid", "username"
             FROM users
-            WHERE "name" = $1 
+            WHERE "username" = $1 
             AND "password" = crypt($2, '${cryptKey}')
         `
         

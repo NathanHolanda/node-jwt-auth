@@ -7,8 +7,10 @@ function errorHandler(err: any, request: Request, res: Response, next: NextFunct
         return res.status(400).send()
     else if(err instanceof ForbiddenError)
         return res.status(403).send()
-    else
+    else{
+        throw err
         return res.status(500).send()
+    }
 }
 
 export default errorHandler
