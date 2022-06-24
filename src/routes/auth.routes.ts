@@ -1,9 +1,11 @@
 import dotenv from "dotenv";
 import { NextFunction, Request, Response, Router } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { Secret, SignOptions } from "jsonwebtoken";
 import ForbiddenError from "../errors/ForbiddenError";
+import UnauthorizedError from "../errors/UnauthorizedError";
 import basicAuthentication from "../middlewares/basicAuthentication";
 import jwtAuthentication from "../middlewares/jwtAuthentication";
+import generateJwt from "../utils/generateJwt";
 
 dotenv.config()
 
@@ -15,13 +17,55 @@ routes.post('/', basicAuthentication, async (req: Request, res: Response, next: 
         if(!user)
             throw new ForbiddenError("Acesso negado.")
 
-        const jwtPayload = {username: user.username}
-        const jwtSecret = String(process.env.JWT_SECRET_KEY)
-        const jwtOptions = {subject: user.uuid}
+        const responseBody = generateJwt(user)
 
-        const jwtToken = jwt.sign(jwtPayload, jwtSecret, jwtOptions)
+        res.json(responseBody)
+    }catch(err: any){
+        next(err)
+    }
+})
 
-        return res.json({token: jwtToken})
+routes.post('/refresh', async (req: Request, res: Response, next: NextFunction) => {
+    try{
+        const {authorization} = req.headers
+
+        if(!authorization)
+            throw new ForbiddenError("Acesso negado.")
+
+        const [authType, refreshToken] = authorization.split(" ")
+
+        if(authType !== "Bearer" || !refreshToken)
+            throw new ForbiddenError("Acesso negado.")
+
+        const refreshSecret = String(process.env.JWT_REFRESH_SECRET_KEY)
+
+        try{
+            const payload = jwt.verify(refreshToken, refreshSecret)
+            if(typeof payload !== "object" || !payload.sub)
+                throw new ForbiddenError("Acesso negado.")
+
+            if(payload.exp){
+                const now = Date.now()/1000
+                const expiresIn = new Date(payload.exp).getTime()
+
+                if(now > expiresIn)
+                    throw new UnauthorizedError("Token expirado.")
+            }
+
+            const user = {
+                uuid: payload.sub,
+                username: payload.name
+            }
+
+            const responseBody = generateJwt(user)
+
+            res.json(responseBody)
+        }catch(err: any){
+            if(err instanceof ForbiddenError)
+                throw new ForbiddenError("Acesso negado.")
+            else
+                throw new UnauthorizedError("Token expirado.")
+        }
     }catch(err: any){
         next(err)
     }

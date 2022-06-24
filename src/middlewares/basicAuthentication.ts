@@ -11,7 +11,7 @@ async function basicAuthentication(req: Request, res: Response, next: NextFuncti
         if(!authorization)
             throw new ForbiddenError("Acesso negado.")
 
-        const [authType, token] = (authorization ?? "").split(" ")
+        const [authType, token] = authorization.split(" ")
 
         if(authType !== "Basic" || !token)
             throw new ForbiddenError("Acesso negado.")
