@@ -3,9 +3,9 @@
 <p align="center">This is a simple JWT authentication microservice made with Node.js + Express.</p>
 
 <p align="center">
-  <a href="computer-technologies">Technologies</a>&nbsp;&nbsp;|&nbsp;
-  <a href="gear-configuration">Configuration</a>&nbsp;&nbsp;|&nbsp;
-  <a href="monocle_face-other-commands">Other commands</a>
+  <a href="#computer-technologies">Technologies</a>&nbsp;&nbsp;|&nbsp;
+  <a href="#gear-configuration">Configuration</a>&nbsp;&nbsp;|&nbsp;
+  <a href="#monocle_face-other-commands">Other commands</a>
 </p>
 
 ## :computer: Technologies
