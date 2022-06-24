@@ -3,13 +3,13 @@ import { NextFunction, Request, Response, Router } from "express";
 import jwt from "jsonwebtoken";
 import ForbiddenError from "../errors/ForbiddenError";
 import basicAuthentication from "../middlewares/basicAuthentication";
-import UsersRepository from "../repositories/UsersRepository";
+import jwtAuthentication from "../middlewares/jwtAuthentication";
 
 dotenv.config()
 
 const routes = Router()
 
-routes.post('/token', basicAuthentication, async (req: Request, res: Response, next: NextFunction) => {
+routes.post('/', basicAuthentication, async (req: Request, res: Response, next: NextFunction) => {
     try{
         const {user} = req
         if(!user)
@@ -25,6 +25,10 @@ routes.post('/token', basicAuthentication, async (req: Request, res: Response, n
     }catch(err: any){
         next(err)
     }
+})
+
+routes.post('/validate', jwtAuthentication, async (req: Request, res: Response, next: NextFunction) => {
+    return res.json({message: "O token JWT tem formato válido."})
 })
 
 export default routes

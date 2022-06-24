@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response, Router } from "express"
-import bearerAuthentication from "../middlewares/bearerAuthentication"
+import jwtAuthentication from "../middlewares/jwtAuthentication"
 import UsersRepository from "../repositories/UsersRepository"
 
 const routes = Router()
 
 const usersRepository = new UsersRepository()
 
-routes.use(bearerAuthentication)
+routes.use(jwtAuthentication)
 
 routes.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try{

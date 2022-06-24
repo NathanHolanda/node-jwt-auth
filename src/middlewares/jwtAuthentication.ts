@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import ForbiddenError from "../errors/ForbiddenError";
 
-function bearerAuthentication(req: Request, res: Response, next: NextFunction){
+function jwtAuthentication(req: Request, res: Response, next: NextFunction){
     dotenv.config()
 
     try{
@@ -18,21 +18,26 @@ function bearerAuthentication(req: Request, res: Response, next: NextFunction){
             throw new ForbiddenError("Acesso negado.")
 
         const secret = String(process.env.JWT_SECRET_KEY)
-        const payload = jwt.verify(token, secret)
+        
+        try{
+            const payload = jwt.verify(token, secret)
+            if(typeof payload !== "object" || !payload.sub)
+                throw new ForbiddenError("Acesso negado.")
 
-        if(typeof payload !== "object" || !payload.sub)
+            const user = {
+                uuid: payload.sub,
+                username: payload.name
+            }
+
+            req.user = user
+        }catch(err: any){
             throw new ForbiddenError("Acesso negado.")
-
-        const user = {
-            uuid: payload.sub,
-            username: payload.name
         }
-
-        req.user = user
+        
         next()
     }catch(err: any){
         next(err)
     }
 }
 
-export default bearerAuthentication
+export default jwtAuthentication
