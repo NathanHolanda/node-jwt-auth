@@ -11,26 +11,26 @@ function jwtAuthentication(req: Request, res: Response, next: NextFunction){
         const {authorization} = req.headers
 
         if(!authorization)
-            throw new ForbiddenError("Acesso negado.")
+            throw new ForbiddenError("Access denied.")
 
         const [authType, token] = authorization.split(" ")
 
         if(authType !== "Bearer" || !token)
-            throw new ForbiddenError("Acesso negado.")
+            throw new ForbiddenError("Access denied.")
 
         const secret = String(process.env.JWT_SECRET_KEY)
 
         try{
             const payload = jwt.verify(token, secret)
             if(typeof payload !== "object" || !payload.sub)
-                throw new ForbiddenError("Acesso negado.")
+                throw new ForbiddenError("Access denied.")
 
             if(payload.exp){
                 const now = Date.now()/1000
                 const expiresIn = new Date(payload.exp).getTime()
 
                 if(now > expiresIn)
-                    throw new UnauthorizedError("Token expirado.")
+                    throw new UnauthorizedError("Token expired.")
             }
 
             const user = {
@@ -41,14 +41,14 @@ function jwtAuthentication(req: Request, res: Response, next: NextFunction){
             req.user = user
         }catch(err: any){
             if(err instanceof ForbiddenError)
-                throw new ForbiddenError("Acesso negado.")
+                throw new ForbiddenError("Access denied.")
             else
-                throw new UnauthorizedError("Token expirado.")
+                throw new UnauthorizedError("Token expired.")
         }
         
-        next()
+        return next()
     }catch(err: any){
-        next(err)
+        return next(err)
     }
 }
 

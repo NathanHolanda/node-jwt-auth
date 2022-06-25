@@ -1,70 +1,48 @@
 import { NextFunction, Request, Response, Router } from "express"
+import createUserController from "../controllers/users/createUser"
+import getAllUsersController from "../controllers/users/getAllUsers"
+import getUserByUuidController from "../controllers/users/getUserByUuid"
+import removeUserController from "../controllers/users/removeUser"
+import updateUserController from "../controllers/users/updateUser"
 import jwtAuthentication from "../middlewares/jwtAuthentication"
-import UsersRepository from "../repositories/UsersRepository"
 
 const routes = Router()
 
-const usersRepository = new UsersRepository()
-
 routes.use(jwtAuthentication)
 
-routes.get('/', async (req: Request, res: Response, next: NextFunction) => {
-    try{
-        const users = await usersRepository.getAll()
-
-        return res.json(users)
-    }catch(err: any){
-        next(err)
+routes.get(
+    '/', 
+    async (req: Request, res: Response, next: NextFunction) => {
+        return await getAllUsersController.handle(req, res, next)
     }
-})
-
-routes.get('/:uuid', async (req: Request<{uuid: string}>, res: Response, next: NextFunction) => {
-    try{
-        const {uuid} = req.params
-
-        const user = await usersRepository.find(uuid)
-
-        return res.json(user)
-    }catch(err: any){
-        next(err)
+)
+    
+routes.get(
+    '/:uuid',
+    async (req: Request<{uuid: string}>, res: Response, next: NextFunction) => {
+        return await getUserByUuidController.handle(req, res, next)
     }
-})
+)
 
-routes.post('/', async (req: Request, res: Response, next: NextFunction) => {
-    try{
-        const data = req.body
-
-        const uuid = await usersRepository.create(data)
-
-        return res.status(201).json({uuid})
-    }catch(err: any){
-        next(err)
+routes.post(
+    '/', 
+    async (req: Request, res: Response, next: NextFunction) => {
+        return await createUserController.handle(req, res, next)
     }
-})
+)
 
-routes.put('/:uuid', async (req: Request, res: Response, next: NextFunction) => {
-    try{
-        const {uuid} = req.params
-        const data = req.body
-
-        await usersRepository.modify(uuid, data)
-
-        return res.send()
-    }catch(err: any){
-        next(err)
+routes.put(
+    '/:uuid', 
+    async (req: Request<{uuid: string}>, res: Response, next: NextFunction) => {
+        return await updateUserController.handle(req, res, next)
     }
-})
+)
 
-routes.delete('/:uuid', async (req: Request, res: Response, next: NextFunction) => {
-    try{
-        const {uuid} = req.params
-
-        await usersRepository.remove(uuid)
-
-        return res.send()
-    }catch(err: any){
-        next(err)
+routes.delete(
+    '/:uuid', 
+    async (req: Request<{uuid: string}>, res: Response, next: NextFunction) => {
+        return await removeUserController.handle(req, res, next)
     }
-})
+)
 
 export default routes

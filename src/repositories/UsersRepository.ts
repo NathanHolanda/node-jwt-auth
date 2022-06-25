@@ -23,7 +23,7 @@ class UsersRepository{
         }
     }
 
-    async find(uuid: string): Promise<User | DatabaseError>{
+    async find(uuid: string): Promise<User>{
         try{
             const script = `
                 SELECT "uuid", "username" 

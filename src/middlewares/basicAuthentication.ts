@@ -9,12 +9,12 @@ async function basicAuthentication(req: Request, res: Response, next: NextFuncti
         const {authorization} = req.headers
 
         if(!authorization)
-            throw new ForbiddenError("Acesso negado.")
+            throw new ForbiddenError("Access denied.")
 
         const [authType, token] = authorization.split(" ")
 
         if(authType !== "Basic" || !token)
-            throw new ForbiddenError("Acesso negado.")
+            throw new ForbiddenError("Access denied.")
 
         const credentials = Buffer.from(token, 'base64').toString('utf8')
         const [username, password] = credentials.split(':')
@@ -22,12 +22,12 @@ async function basicAuthentication(req: Request, res: Response, next: NextFuncti
         const user = await usersRepository.authenticate(username, password)
 
         if(!user)
-            throw new ForbiddenError("Acesso negado.")
+            throw new ForbiddenError("Access denied.")
 
         req.user = user
-        next()
+        return next()
     }catch(err: any){
-        next(err)
+        return next(err)
     }
 }
 
