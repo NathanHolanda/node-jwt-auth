@@ -1,6 +1,7 @@
 import dotenv from "dotenv"
 import express from "express"
 import routes from "./routes"
+import "reflect-metadata"
 
 dotenv.config()
 const port = +(process.env.SERVER_PORT || 3000)

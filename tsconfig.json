@@ -3,7 +3,9 @@
 {
   "compilerOptions": {
     "target": "es2016",                                  
-    "module": "commonjs",                                
+    "module": "commonjs",   
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,                             
     "rootDir": "./src",                                 
     "typeRoots": [
       "./src/@types",
