@@ -3,11 +3,23 @@ import dotenv from "dotenv"
 
 dotenv.config()
 
-const username = process.env.PG_USER
-const password = process.env.PG_PASSWORD
-const host = process.env.PG_HOST
+const username = String(process.env.PG_USER ?? "postgres")
+const password = String(process.env.PG_PASSWORD ?? "root")
+const host = String(process.env.PG_HOST ?? "localhost")
 const port = +(process.env.PG_PORT ?? 5432)
-const database = process.env.PG_DATABASE
+const database = String(process.env.PG_DATABASE ?? "node-jwt-auth")
+
+const entities = process.env.ENV_TYPE === "production" ? [
+        "dist/database/entities/**/*.js"
+    ] : [
+        "src/database/entities/**/*.ts"
+    ]
+
+const migrations = process.env.ENV_TYPE === "production" ? [
+        "dist/database/migrations/**/*.js"
+    ] : [
+        "src/database/migrations/**/*.ts"
+    ]
 
 
 const AppDataSource = new DataSource({
@@ -17,8 +29,8 @@ const AppDataSource = new DataSource({
     username,
     password,
     database,
-    entities: ["src/database/entities/**/*.ts"],
-    migrations: ["src/database/migrations/**/*.ts"],
+    entities,
+    migrations,
     migrationsTableName: "migrations"
 })
 

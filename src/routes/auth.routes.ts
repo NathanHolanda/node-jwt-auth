@@ -1,11 +1,8 @@
-import dotenv from "dotenv";
 import { NextFunction, Request, Response, Router } from "express";
 import generateTokenController from "../controllers/auth/generateToken";
 import refreshTokenController from "../controllers/auth/refreshToken";
 import basicAuthentication from "../middlewares/basicAuthentication";
 import jwtAuthentication from "../middlewares/jwtAuthentication";
-
-dotenv.config()
 
 const routes = Router()
 
