@@ -10,26 +10,22 @@
 
 ## :computer: Technologies
 
-#### Main used technologies:
+#### Main technologies used:
 
 - [Node.js](https://nodejs.org)
 - [TypeScript](https://www.typescriptlang.org)
 - [Express](https://expressjs.com)
 - [PostgreSQL](https://www.postgresql.org)
+- [TypeORM](https://typeorm.io)
+- [JWT](https://jwt.io)
 
 ## :gear: Configuration
 
 #### 1. First of all, you need to create/have a PostgreSQL database.
 
-#### 2. Then, in `/.env` change the PostgreSQL variables to suit in your configurations.
+#### 2. Then, in `/.env` make sure the PostgreSQL variables are the same you use to connect to your database.
 
-#### 3. In `/src/sql/init.sql` there're some initial queries to create the users table and this one to insert the first item:
-```
-INSERT INTO users ("username", "password") VALUES ('nathan', crypt('admin', 'my_password'));
-```
-In this case, you can change 'my_password' for the same you defined as PG_PASSWORD_CRYPT_KEY in `./env`. Then you can run this queries in your database.
-
-#### 4. To install all project dependencies:
+#### 3. To install all project dependencies:
 ```
 $ npm install
 ```
@@ -38,7 +34,16 @@ or using Yarn:
 $ yarn
 ```
 
-#### 5. Then, to run:
+#### 4. To init database, creating the users table:
+```
+$ npm run typeorm-migration
+``` 
+or using Yarn:
+```
+$ yarn typeorm-migration
+```
+
+#### 5. Finally, to run:
 ```
 $ npm run dev
 ```
@@ -61,6 +66,9 @@ $ yarn build
 
 #### To serve in production (it needs to be built first):
 
+#### 1. In `/.env` switch ENV_TYPE from "development" to "production".
+
+#### 2. Then, run in production by the following command:
 ```
 $ npm run start
 ```
