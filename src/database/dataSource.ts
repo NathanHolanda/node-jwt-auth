@@ -1,12 +1,22 @@
 import { DataSource } from "typeorm"
+import dotenv from "dotenv"
+
+dotenv.config()
+
+const username = process.env.PG_USER
+const password = process.env.PG_PASSWORD
+const host = process.env.PG_HOST
+const port = +(process.env.PG_PORT ?? 5432)
+const database = process.env.PG_DATABASE
+
 
 const AppDataSource = new DataSource({
     type: "postgres",
-    host: "localhost",
-    port: 5432,
-    username: "postgres",
-    password: "root",
-    database: "node-jwt-auth",
+    host,
+    port,
+    username,
+    password,
+    database,
     entities: ["src/database/entities/**/*.ts"],
     migrations: ["src/database/migrations/**/*.ts"],
     migrationsTableName: "migrations"

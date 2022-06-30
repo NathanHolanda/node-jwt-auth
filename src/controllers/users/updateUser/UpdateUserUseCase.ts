@@ -1,11 +1,27 @@
+import { Repository } from "typeorm";
+import dataSource from "../../../database/dataSource";
+import { Users } from "../../../database/entities/Users";
+import DatabaseError from "../../../errors/DatabaseError";
 import { User } from "../../../models/User";
-import UsersRepository from "../../../repositories/UsersRepository";
+import encryptPassword from "../../../utils/encryptPassword";
 
 class UpdateUserUseCase{
-    constructor(private usersRepository: UsersRepository){}
+    constructor(){
+        this.usersRepository = dataSource.getRepository(Users)
+    }
+
+    private usersRepository: Repository<Users>
 
     async execute(uuid: string, data: User): Promise<void>{
-        await this.usersRepository.modify(uuid, data)
+        try{
+            if(data.password)
+                data.password = await encryptPassword(data.password)
+
+            await this.usersRepository
+                .update({uuid}, data)
+        }catch(err: any){
+            throw new DatabaseError("Error while updating user.")
+        }
     }
 }
 

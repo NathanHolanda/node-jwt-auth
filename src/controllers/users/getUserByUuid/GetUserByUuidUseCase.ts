@@ -9,7 +9,7 @@ class GetUserByUuidUseCase{
         this.usersRepository = dataSource.getRepository(Users)
     }
 
-    private usersRepository: Repository<User>
+    private usersRepository: Repository<Users>
 
     async execute(uuid: string): Promise<User | null>{
         try{
