@@ -1,7 +1,9 @@
+import UsersRepository from "../../../database/repositories/UsersRepository"
 import GetAllUsersController from "./GetAllUsersController"
 import GetAllUsersUseCase from "./GetAllUsersUseCase"
 
-const getAllUsersUseCase = new GetAllUsersUseCase()
+const usersRepository = new UsersRepository()
+const getAllUsersUseCase = new GetAllUsersUseCase(usersRepository)
 const getAllUsersController = new GetAllUsersController(getAllUsersUseCase)
 
 export default getAllUsersController

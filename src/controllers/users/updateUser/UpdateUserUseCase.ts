@@ -1,24 +1,20 @@
 import { Repository } from "typeorm";
 import dataSource from "../../../database/dataSource";
 import { Users } from "../../../database/entities/Users";
+import UsersRepository from "../../../database/repositories/UsersRepository";
 import DatabaseError from "../../../errors/DatabaseError";
-import { User } from "../../../models/User";
+import { IUser } from "../../../interfaces/IUser";
 import encryptPassword from "../../../utils/encryptPassword";
 
 class UpdateUserUseCase{
-    constructor(){
-        this.usersRepository = dataSource.getRepository(Users)
-    }
+    constructor(private usersRepository: UsersRepository){}
 
-    private usersRepository: Repository<Users>
-
-    async execute(uuid: string, data: User): Promise<void>{
+    async execute(uuid: string, data: IUser): Promise<void>{
         try{
             if(data.password)
                 data.password = await encryptPassword(data.password)
 
-            await this.usersRepository
-                .update({uuid}, data)
+            await this.usersRepository.update(uuid, data)
         }catch(err: any){
             throw new DatabaseError("Error while updating user.")
         }

@@ -1,7 +1,8 @@
 import { Column, Entity, PrimaryColumn } from "typeorm"
+import { IUser } from "../../interfaces/IUser"
 
 @Entity()
-class Users{
+class Users implements IUser{
     @PrimaryColumn("uuid")
     uuid?: string
     

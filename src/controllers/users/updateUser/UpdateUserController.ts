@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express"
-import { User } from "../../../models/User"
+import { IUser } from "../../../interfaces/IUser"
 import UpdateUserUseCase from "./UpdateUserUseCase"
 
 class UpdateUserController{
@@ -8,7 +8,7 @@ class UpdateUserController{
     async handle(req: Request, res: Response, next: NextFunction): Promise<Response | void>{
         try{
             const {uuid} = req.params
-            const data: User = req.body
+            const data: IUser = req.body
     
             await this.updateUserUseCase.execute(uuid, data)
     

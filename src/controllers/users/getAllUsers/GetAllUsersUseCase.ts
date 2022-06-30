@@ -1,24 +1,13 @@
-import { Repository } from "typeorm"
-import dataSource from "../../../database/dataSource"
-import { Users } from "../../../database/entities/Users"
+import UsersRepository from "../../../database/repositories/UsersRepository"
 import DatabaseError from "../../../errors/DatabaseError"
-import { User } from "../../../models/User"
+import { IUser } from "../../../interfaces/IUser"
 
 class GetAllUsersUseCase{
-    constructor(){
-        this.usersRepository = dataSource.getRepository(Users)
-    }
+    constructor(private usersRepository: UsersRepository){}
 
-    private usersRepository: Repository<Users>
-
-    async execute(): Promise<User[]>{
+    async execute(): Promise<IUser[]>{
         try{
-            const users = await this.usersRepository.find({
-                select: {
-                    uuid: true,
-                    username: true
-                }
-            })
+            const users = await this.usersRepository.getAll()
 
             return users
         }catch(err: any){

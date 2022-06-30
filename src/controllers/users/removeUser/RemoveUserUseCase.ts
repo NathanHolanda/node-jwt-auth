@@ -1,19 +1,12 @@
-import { Repository } from "typeorm";
-import dataSource from "../../../database/dataSource";
-import { Users } from "../../../database/entities/Users";
+import UsersRepository from "../../../database/repositories/UsersRepository";
 import DatabaseError from "../../../errors/DatabaseError";
 
 class RemoveUserUseCase{
-    constructor(){
-        this.usersRepository = dataSource.getRepository(Users)
-    }
-
-    private usersRepository: Repository<Users>
+    constructor(private usersRepository: UsersRepository){}
 
     async execute(uuid: string): Promise<void>{
         try{
-            await this.usersRepository
-                .delete({uuid})
+            await this.usersRepository.remove(uuid)
         }catch(err: any){
             throw new DatabaseError("Error while deleting user.")
         }

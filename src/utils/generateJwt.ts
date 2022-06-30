@@ -1,8 +1,8 @@
 import { SignOptions } from "jsonwebtoken"
-import { User } from "../models/User"
+import { IUser } from "../interfaces/IUser"
 import jwt from "jsonwebtoken"
 
-function generateJwt(user: User) {
+function generateJwt(user: IUser) {
     const jwtPayload = {username: user.username}
         const jwtSecret = String(process.env.JWT_SECRET_KEY)
         const jwtOptions: SignOptions = {

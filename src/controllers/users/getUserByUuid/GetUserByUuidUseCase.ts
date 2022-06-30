@@ -1,27 +1,17 @@
-import { Repository } from "typeorm";
-import dataSource from "../../../database/dataSource";
-import { Users } from "../../../database/entities/Users";
+import UsersRepository from "../../../database/repositories/UsersRepository";
 import DatabaseError from "../../../errors/DatabaseError";
-import { User } from "../../../models/User";
+import { IUser } from "../../../interfaces/IUser";
 
 class GetUserByUuidUseCase{
-    constructor(){
-        this.usersRepository = dataSource.getRepository(Users)
-    }
+    constructor(private usersRepository: UsersRepository){}
 
-    private usersRepository: Repository<Users>
-
-    async execute(uuid: string): Promise<User | null>{
+    async execute(uuid: string): Promise<IUser>{
         try{
-            const user = await this.usersRepository.findOne({
-                select: {
-                    uuid: true,
-                    username: true
-                },
-                where: {uuid}
-            })
-
-            return user
+            const user = await this.usersRepository.getByUuid(uuid)
+            if(user)
+                return user
+            
+            throw new Error
         }catch(err: any){
             throw new DatabaseError("Error while getting user by UUID.")
         }
