@@ -1,7 +1,4 @@
-import bcrypt from "bcrypt"
 import { NextFunction, Request, Response } from "express"
-import dataSource from "../database/dataSource"
-import { Users } from "../database/entities/Users"
 import UsersRepository from "../database/repositories/UsersRepository"
 import ForbiddenError from "../errors/ForbiddenError"
 

@@ -18,6 +18,7 @@
 - [PostgreSQL](https://www.postgresql.org)
 - [TypeORM](https://typeorm.io)
 - [JWT](https://jwt.io)
+- [Jest](jestjs.io)
 
 ## :gear: Configuration
 
@@ -55,7 +56,6 @@ $ yarn dev
 ## :monocle_face: Other commands
 
 #### To build the project for production:
-
 ```
 $ npm run build
 ```
@@ -66,7 +66,7 @@ $ yarn build
 
 #### To serve in production (it needs to be built first):
 
-#### 1. In `/.env` switch ENV_TYPE from "development" to "production".
+#### 1. In `/.env` switch NODE_ENV from "development" to "production".
 
 #### 2. Then, run in production by the following command:
 ```
@@ -75,4 +75,19 @@ $ npm run start
 or using Yarn:
 ```
 $ yarn start
+```
+
+#### To test the controllers:
+
+#### 1. First of all, you need to create/have another PostgreSQL database for testing.
+
+#### 2. Then, in `/.env` make sure the PostgreSQL variables are the same you use to connect to your testing database.
+
+#### 3. Finally, to run the tests:
+```
+$ npm run test
+```
+or using Yarn:
+```
+$ yarn test
 ```

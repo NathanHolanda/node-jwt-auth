@@ -3,7 +3,7 @@ import { Request, Response, Router } from "express";
 
 dotenv.config()
 
-const port = process.env.SERVER_PORT
+const port = process.env.NODE_SERVER_PORT
 
 const routes = Router()
 

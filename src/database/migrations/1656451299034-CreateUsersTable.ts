@@ -2,7 +2,6 @@ import { MigrationInterface, QueryRunner } from "typeorm"
 import encryptPassword from "../../utils/encryptPassword"
 
 export class CreateUsersTable1656451299034 implements MigrationInterface {
-
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"")
 
@@ -17,7 +16,14 @@ export class CreateUsersTable1656451299034 implements MigrationInterface {
         
         const password = await encryptPassword("admin")
         await queryRunner.query(`
-            INSERT INTO users ("username", "password") VALUES ('nathan', '${password}')
+            INSERT INTO users (
+                "username", 
+                "password"
+            ) 
+            VALUES (
+                'nathan', 
+                '${password}'
+            )
         `)
     }
 

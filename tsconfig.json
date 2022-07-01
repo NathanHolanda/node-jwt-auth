@@ -23,6 +23,9 @@
     "src/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "**/__tests__/**/*.ts",
+    "**/*.test.ts",
+    "src/**/tests"
   ]
 }

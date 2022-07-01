@@ -3,43 +3,55 @@ import dotenv from "dotenv"
 
 dotenv.config()
 
-const username = String(process.env.PG_USER ?? "postgres")
-const password = String(process.env.PG_PASSWORD ?? "root")
-const host = String(process.env.PG_HOST ?? "localhost")
-const port = +(process.env.PG_PORT ?? 5432)
-const database = String(process.env.PG_DATABASE ?? "node-jwt-auth")
+const environment = process.env.NODE_ENV
 
-const entities = process.env.ENV_TYPE === "production" ? [
-        "dist/database/entities/**/*.js"
-    ] : [
-        "src/database/entities/**/*.ts"
-    ]
+const defaultOptions = {
+    username: String(process.env.PG_TEST_USER ?? "postgres"),
+    password: String(process.env.PG_TEST_PASSWORD ?? "root"),
+    host: String(process.env.PG_TEST_HOST ?? "localhost"),
+    port: +(process.env.PG_TEST_PORT ?? 5432),
+}
 
-const migrations = process.env.ENV_TYPE === "production" ? [
-        "dist/database/migrations/**/*.js"
-    ] : [
-        "src/database/migrations/**/*.ts"
-    ]
+const options = environment === "test" ? {
+    ...defaultOptions,
+    database: String(process.env.PG_TEST_DATABASE ?? "node-jwt-auth-test")
+} : {
+    ...defaultOptions,
+    database: String(process.env.PG_DATABASE ?? "node-jwt-auth")
+}
+
+const entities = environment === "production" ? [
+    "dist/database/entities/**/*.js"
+] : [
+    "src/database/entities/**/*.ts"
+]
+
+const migrations = environment === "production" ? [
+    "dist/database/migrations/**/*.js"
+] : environment === "test" ? [
+    "src/database/migrations/tests/**/*.ts"
+] : [
+    "src/database/migrations/**/*.ts"
+]
 
 
-const AppDataSource = new DataSource({
+const dataSource = new DataSource({
+    ...options,
     type: "postgres",
-    host,
-    port,
-    username,
-    password,
-    database,
     entities,
     migrations,
     migrationsTableName: "migrations"
 })
 
-AppDataSource.initialize()
-    .then(() => {
-        console.log("Data Source has been initialized!")
-    })
-    .catch((err) => {
-        console.error("Error during Data Source initialization", err)
-    })
+if(environment !== "test")
+    dataSource
+        .initialize()
+        .then(() => {
+            console.log("Data Source has been initialized!")
+        })
+        .catch((err) => {
+            console.error("Error during Data Source initialization", err)
+        })
+ 
 
-export default AppDataSource
+export default dataSource

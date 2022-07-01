@@ -5,12 +5,13 @@
   "main": "./dist/index.js",
   "type": "commonjs",
   "scripts": {
-    "test": "jest",
+    "test": "jest --detectOpenHandles",
     "dev": "ts-node-dev --respawn --transpile-only --ignore-watch node_modules --no-notify ./src/index.ts",
     "build": "rimraf dist && tsc -p .",
     "start": "node ./",
     "typeorm": "typeorm-ts-node-esm",
-    "typeorm-migration": "typeorm-ts-node-esm migration:run -d ./src/database/dataSource.ts"
+    "typeorm-migration": "typeorm-ts-node-esm migration:run -d ./src/database/dataSource.ts",
+    "typeorm-rollback": "typeorm-ts-node-esm migration:revert -d ./src/database/dataSource.ts"
   },
   "author": "",
   "license": "ISC",
@@ -22,8 +23,14 @@
     "@types/node": "^18.0.0",
     "@types/pg": "^8.6.5",
     "@types/rimraf": "^3.0.2",
+    "@types/superagent": "^4.1.15",
+    "@types/supertest": "^2.0.12",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
     "jest": "^28.1.2",
     "rimraf": "^3.0.2",
+    "superagent": "^8.0.0",
+    "supertest": "^6.2.3",
     "ts-jest": "^28.0.5",
     "ts-node-dev": "^2.0.0",
     "typescript": "^4.7.4"

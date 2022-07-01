@@ -1,6 +1,3 @@
-import { Repository } from "typeorm";
-import dataSource from "../../../database/dataSource";
-import { Users } from "../../../database/entities/Users";
 import UsersRepository from "../../../database/repositories/UsersRepository";
 import DatabaseError from "../../../errors/DatabaseError";
 import { IUser } from "../../../interfaces/IUser";
