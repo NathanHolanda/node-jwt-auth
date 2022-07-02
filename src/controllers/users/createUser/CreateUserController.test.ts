@@ -4,7 +4,7 @@ import dataSource from "../../../database/dataSource"
 
 jest.setTimeout(10000)
 
-describe("Test the JWT validation path", () => {
+describe("Test the create user path", () => {
     beforeAll(async () => {
         await dataSource.initialize()
         await dataSource.runMigrations()
@@ -15,7 +15,7 @@ describe("Test the JWT validation path", () => {
         await dataSource.destroy()
     })
 
-    test("It should return status code 200 and body containing a message", async () => {
+    test("It should return status code 201 and body containing the created user UUID", async () => {
         const hash = Buffer.from("nathan:admin").toString("base64")
 
         const {body: {token}} = await request(app)
@@ -23,10 +23,15 @@ describe("Test the JWT validation path", () => {
             .set("Authorization", `Basic ${hash}`)
 
         const res = await request(app)
-            .post("/token/validate")
+            .post("/users")
             .set("Authorization", `Bearer ${token}`)
+            .send({
+                username: "johndoe",
+                password: "123456"
+            })
 
-        expect(res.body).toHaveProperty("message", "O token JWT tem formato válido.")
-        expect(res.statusCode).toBe(200)
+        expect(res.statusCode).toBe(201)
+        expect(res.body).toHaveProperty("uuid")
+        expect(res.body.uuid).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)
     })
 })

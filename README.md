@@ -1,4 +1,4 @@
-## JWT Authentication
+## JWT Authentication in Node.js
 
 <p align="center">This is a simple JWT authentication microservice made with Node.js + Express.</p>
 
